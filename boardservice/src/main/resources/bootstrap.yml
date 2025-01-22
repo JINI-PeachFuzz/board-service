@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: board-service # 이 이름을 바탕으로 설정파일이 만들어짐
+
+  cloud:
+    config:
+      uri: ${config.server}
