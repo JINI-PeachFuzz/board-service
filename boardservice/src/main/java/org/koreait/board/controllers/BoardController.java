@@ -23,9 +23,10 @@ public class BoardController {
      * @param bid
      * @return
      */
-    @GetMapping("/config/{bid}")
-    public JSONData config(@PathVariable("bid") String bid) {
-
+    @GetMapping("/config/{bid}") // 경로변수 추가
+    public JSONData config(@PathVariable("bid") String bid) { // URL 경로에서 값을 추출하기 위한 애노테이션
+    // /config/123일경우 bid는 123이 되는거 // 겟방식이라 123을 전달해줌 // id는 유일무이한 거임
+        // {bid} 이부분은 중괄호로 감싸야하고, 경로변수와 PathVariable에 적은거==bid 2개는 동일해야함
         return null;
     }
 
@@ -34,7 +35,7 @@ public class BoardController {
      *
      * @return
      */
-    @PostMapping("/save")
+    @PostMapping("/save") // 한꺼번에 조회하기 위해 post방식으로 했음
     public JSONData save(@Valid @RequestBody RequestBoard form, Errors errors) {
         String mode = form.getMode();
         mode = StringUtils.hasText(mode) ? mode : "write";
@@ -59,7 +60,8 @@ public class BoardController {
      */
     @GetMapping("/view/{seq}")
     public JSONData view(@PathVariable("seq") Long seq) {
-        commonProcess(seq, "view");
+        commonProcess(seq, "view"); // Long seq 경로변수
+
 
         return null;
     }

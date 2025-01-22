@@ -48,7 +48,7 @@ public class SecurityConfig {
                    }); // 로그인 후 권한이 없는 경우
                 })
                 .authorizeHttpRequests(c -> {
-                   c.requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                   c.requestMatchers("/admin/**").hasAnyAuthority("ADMIN") // /admin 붙인건 전부 관리자 쪽
                            .anyRequest().permitAll();
                 });
 

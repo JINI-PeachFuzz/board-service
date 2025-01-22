@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/admin")
-@RequiredArgsConstructor
+@RestController // 일반컨트롤러는 사용할 일이 없음!
+// rest(JSON, XML)로 주고 받을 거니까 / 웹서비스 컨트롤러 / 컨트롤러랑 리스폰스바디결합형
+@RequestMapping("/admin") // 우리가 정한 경로! / 관리자쪽
+@RequiredArgsConstructor // 생성자 자동생성해주는거 / 의존성 주입
 public class BoardAdminController {
 
     private final Utils utils;
@@ -21,7 +22,8 @@ public class BoardAdminController {
 
     /**
      * 게시판 설정 등록, 수정 처리
-     *
+     * // 등록, 수정을 하고나면 결과를 바로바로 보고싶어함
+     * 그래서 반환값으로 수정했던걸 보여주게 설정을 넣어줌 그래서 JSONData를 넣어줌
      * @return
      */
     @PostMapping("/config")
@@ -49,7 +51,7 @@ public class BoardAdminController {
 
     /**
      * 게시판 한개 또는 여러개 일괄 수정
-     *
+     * // put은 전체를 대체하는반면 patch는 일부만 수정할 때 사용
      * @return
      */
     @PatchMapping("/config")
@@ -60,7 +62,7 @@ public class BoardAdminController {
 
     /**
      * 게시판 한개 또는 여러개 삭제 처리
-     *
+     * // 삭제할때도 후속처리가 있을꺼임 / 그래서 변경된걸 보여주는걸로
      * @param bids
      * @return
      */
