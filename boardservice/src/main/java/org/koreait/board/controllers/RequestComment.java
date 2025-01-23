@@ -10,7 +10,7 @@ public class RequestComment {
     private String mode;
     private Long seq;
 
-    @NotNull
+    @NotNull // 이런걸 젤 처음에 검증을 해봄
     private Long boardDataSeq;
 
     @NotBlank

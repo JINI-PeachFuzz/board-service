@@ -34,6 +34,7 @@ public class CommentValidator implements Validator, PasswordValidator {
         /**
          * 1. 수정모드인 경우 seq 필수
          * 2. 비회원인 경우 guestPw 필수, 비밀번호 복잡성 - 대소문자 구분없는 알파벳 + 숫자
+         * // 제일 상위가 오브젝트이니까 위에서 오브젝트로 만들었고 아래는 오브젝트를 내가 사용할 형으로 형변환시켜준거!
          */
         RequestComment form = (RequestComment) target;
         String mode = form.getMode();

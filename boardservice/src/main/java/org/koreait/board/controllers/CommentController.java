@@ -25,7 +25,7 @@ public class CommentController {
     @PostMapping("/save")
     public JSONData save(@RequestBody @Valid RequestComment form, Errors errors) {
 
-        commentValidator.validate(form, errors);
+        commentValidator.validate(form, errors); // 검증한게 errors 객체에 담김!
 
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
