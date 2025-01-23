@@ -1,5 +1,6 @@
 package org.koreait.global.libs;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.koreait.global.entities.CodeValue;
@@ -28,8 +29,8 @@ public class Utils {
     private final MessageSource messageSource;
     private final DiscoveryClient discoveryClient;
     private final CodeValueRepository codeValueRepository;
-
     private final MemberUtil memberUtil;
+
     /**
      * 메서지 코드로 조회된 문구
      *
@@ -166,12 +167,13 @@ public class Utils {
 
     /**
      * 저장된 값 code로 삭제
+     *
      * @param code
      */
     public void deleteValue(String code) {
         codeValueRepository.deleteById(code);
     }
-    
+
     public String getUserHash() {
         String userKey = "" + Objects.hash("userHash");
 
@@ -199,7 +201,8 @@ public class Utils {
 
     /**
      * 요청 헤더
-     * - JWT 토큰이 있으면 자동 추가
+     *  - JWT 토큰이 있으면 자동 추가
+     *
      * @return
      */
     public HttpHeaders getRequestHeader() {
@@ -208,6 +211,7 @@ public class Utils {
         if (StringUtils.hasText(token)) {
             headers.setBearerAuth(token);
         }
+
         return headers;
     }
 
@@ -222,4 +226,5 @@ public class Utils {
             return Objects.hash(ip, ua);
         }
     }
+
 }
