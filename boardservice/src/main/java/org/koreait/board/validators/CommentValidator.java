@@ -2,6 +2,8 @@ package org.koreait.board.validators;
 
 import lombok.RequiredArgsConstructor;
 import org.koreait.board.controllers.RequestComment;
+import org.koreait.board.entities.CommentData;
+import org.koreait.board.repositories.CommentDataRepository;
 import org.koreait.global.validators.PasswordValidator;
 import org.koreait.member.MemberUtil;
 import org.springframework.context.annotation.Lazy;
@@ -19,6 +21,7 @@ public class CommentValidator implements Validator, PasswordValidator {
 
     private final MemberUtil memberUtil;
     private final PasswordEncoder passwordEncoder;
+    private final CommentDataRepository commentDataRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -34,7 +37,6 @@ public class CommentValidator implements Validator, PasswordValidator {
         /**
          * 1. 수정모드인 경우 seq 필수
          * 2. 비회원인 경우 guestPw 필수, 비밀번호 복잡성 - 대소문자 구분없는 알파벳 + 숫자
-         * // 제일 상위가 오브젝트이니까 위에서 오브젝트로 만들었고 아래는 오브젝트를 내가 사용할 형으로 형변환시켜준거!
          */
         RequestComment form = (RequestComment) target;
         String mode = form.getMode();
@@ -65,6 +67,12 @@ public class CommentValidator implements Validator, PasswordValidator {
      */
     public boolean checkGuestPassword(String password, Long seq) {
         if (seq == null) return false;
+
+        CommentData item = commentDataRepository.findById(seq).orElse(null);
+
+        if (item != null && StringUtils.hasText(item.getGuestPw())) {
+            return passwordEncoder.matches(password, item.getGuestPw());
+        }
 
         return false;
     }
