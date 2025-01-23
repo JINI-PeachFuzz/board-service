@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class RedisConfig { // 레디스형태 추가!
+public class RedisConfig { // 레디스형태 추가! / 임시데이터, 기록하기 위한거 그래서 만료시간을 넣어준거
     @Value("${spring.data.redis.host}")
     private String host;
 

@@ -24,7 +24,7 @@ public class BoardController {
      * @return
      */
     @GetMapping("/config/{bid}") // 경로변수 추가
-    public JSONData config(@PathVariable("bid") String bid) { // URL 경로에서 값을 추출하기 위한 애노테이션
+    public JSONData config(@PathVariable("bid") String bid) { // URL 경로에서 값을 추출하기 위한 애노테이션 / bid을 활용한 콘피그 조회 로직
     // /config/123일경우 bid는 123이 되는거 // 겟방식이라 123을 전달해줌 // id는 유일무이한 거임
         // {bid} 이부분은 중괄호로 감싸야하고, 경로변수와 PathVariable에 적은거==bid 2개는 동일해야함
         return null;
