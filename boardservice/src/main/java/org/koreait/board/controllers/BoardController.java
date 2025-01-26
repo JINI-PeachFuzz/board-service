@@ -2,10 +2,17 @@ package org.koreait.board.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.koreait.board.entities.Board;
+import org.koreait.board.entities.BoardData;
+import org.koreait.board.services.*;
+import org.koreait.board.services.configs.BoardConfigInfoService;
 import org.koreait.board.validators.BoardValidator;
 import org.koreait.global.exceptions.BadRequestException;
 import org.koreait.global.libs.Utils;
+import org.koreait.global.paging.ListData;
 import org.koreait.global.rests.JSONData;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +23,12 @@ public class BoardController {
 
     private final Utils utils;
     private final BoardValidator boardValidator;
+    private final BoardConfigInfoService configInfoService;
+    private final BoardUpdateService updateService;
+    private final BoardInfoService infoService;
+    private final BoardDeleteService deleteService;
+    private final BoardAuthService authService;
+    private final BoardViewUpdateService viewUpdateService;
 
     /**
      * 게시판 설정 한개 조회
@@ -27,7 +40,10 @@ public class BoardController {
     public JSONData config(@PathVariable("bid") String bid) { // URL 경로에서 값을 추출하기 위한 애노테이션 / bid을 활용한 콘피그 조회 로직
     // /config/123일경우 bid는 123이 되는거 // 겟방식이라 123을 전달해줌 // id는 유일무이한 거임
         // {bid} 이부분은 중괄호로 감싸야하고, 경로변수와 PathVariable에 적은거==bid 2개는 동일해야함
-        return null;
+
+        Board board = configInfoService.get(bid);
+
+        return new JSONData(board);
     }
 
     /**
@@ -47,8 +63,9 @@ public class BoardController {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
 
+        BoardData data = updateService.process(form);
 
-        return null;
+        return new JSONData(data);
     }
 
     /**
@@ -62,8 +79,9 @@ public class BoardController {
     public JSONData view(@PathVariable("seq") Long seq) {
         commonProcess(seq, "view"); // Long seq 경로변수
 
+        BoardData data = infoService.get(seq);
 
-        return null;
+        return new JSONData(data);
     }
 
     /**
@@ -73,10 +91,23 @@ public class BoardController {
      * @return
      */
     @GetMapping("/list/{bid}")
-    public JSONData list(@PathVariable("bid") String bid) {
+    public JSONData list(@PathVariable("bid") String bid, @ModelAttribute BoardSearch search) {
         commonProcess(bid, "list");
 
-        return null;
+        ListData<BoardData> data = infoService.getList(bid, search);
+
+        return new JSONData(data);
+    }
+
+    /**
+     * 조회수 업데이트 처리
+     *
+     * @param seq
+     */
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @GetMapping("/viewcount/{seq}")
+    public void updateViewCount(@PathVariable("seq") Long seq) {
+        viewUpdateService.process(seq);
     }
 
     /**
@@ -89,9 +120,28 @@ public class BoardController {
     public JSONData delete(@PathVariable("seq") Long seq) {
         commonProcess(seq, "delete");
 
-        return null;
+        boardValidator.checkDelete(seq); // 댓글이 존재하면 삭제 불가
+        BoardData item = deleteService.delete(seq);
+
+        return new JSONData(item);
     }
 
+    /**
+     * 비회원 비밀번호 검증
+     *  - 응답코드 204 : 검증 성공
+     *  - 응답코드 401 : 검증 실패
+     *
+     * @params seq : 게시글 번호
+     */
+    @PostMapping("/password/{seq}")
+    public ResponseEntity<Void> validateGuestPassword(@PathVariable("seq") Long seq, @RequestParam(name="password", required = false) String password) {
+        if (!StringUtils.hasText(password)) {
+            throw new BadRequestException(utils.getMessage("NotBlank.password"));
+        }
+        HttpStatus status = boardValidator.checkGuestPassword(password, seq) ? HttpStatus.NO_CONTENT : HttpStatus.UNAUTHORIZED; // 204(컨텐츠가 없으니까), 401
+
+        return ResponseEntity.status(status).build();
+    }
 
     /**
      * 게시글 번호로 공통 처리
@@ -100,7 +150,7 @@ public class BoardController {
      * @param mode
      */
     private void commonProcess(Long seq, String mode) {
-
+        authService.check(mode, seq); // 게시판 권한 체크 - 조회, 수정, 삭제
     }
 
     /**
@@ -110,6 +160,6 @@ public class BoardController {
      * @param mode
      */
     private void commonProcess(String bid, String mode) {
-
+        authService.check(mode, bid); // 게시판 권한 체크 - 글목록, 글 작성
     }
 }
