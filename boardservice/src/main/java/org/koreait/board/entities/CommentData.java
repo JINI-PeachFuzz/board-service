@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(indexes = @Index(name = "idx_comment_data_created_at", columnList = "createdAt ASC"))
 public class CommentData extends BaseMemberEntity implements Serializable {
-    @Id @GeneratedValue
+    @Id @GeneratedValue // 기본키(Primary Key) 자동생성
     private Long seq;
 
     @JsonIgnore // DB추가시엔 필요할꺼같지만....

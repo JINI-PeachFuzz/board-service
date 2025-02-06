@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.koreait.member.contants.Authority;
 
+// 커맨드객체 구성
 @Data
 public class RequestConfig {
     private String mode;
